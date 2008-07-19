@@ -1,0 +1,103 @@
+has_friends
+===========
+
+Instalation
+-----------
+
+1) Install the plugin with `script/plugin install git://github.com/fnando/has_friends.git`
+2) Generate a migration with `script/generate migration create_friendships` and add the following code:
+
+class CreateFriendships < ActiveRecord::Migration
+  def self.up
+    create_table :friendships do |t|
+      t.references :user, :friend
+      t.datetime :requested_at, :accepted_at, :denied_at, :null => true, :default => nil
+      t.string :status
+    end
+    
+    add_index :friendships, [:user_id, :friend_id]
+    add_index :friendships, :status
+  end
+
+  def self.down
+    drop_table :friendships
+  end
+end
+
+3) Run the migrations with `rake db:migrate`
+
+Usage
+-----
+
+1) Add the method call `has_friends` to your model.
+
+class User < ActiveRecord::Base
+  has_friends
+end
+
+john = User.find_by_login 'john'
+mary = User.find_by_login 'mary'
+paul = User.find_by_login 'paul'
+
+# john wants to be friend with mary
+# always return a friendship object
+john.be_friend_with(mary)
+
+# are they friends?
+john.friend_with?(mary)
+
+# get the friendship object
+john.friendship_for(mary)
+
+# get the friendship status
+# can be :pending, :accepted, :denied or nil
+john.friendship_status_for(mary)
+
+# mary accepts john's request if it exists;
+# makes a friendship request otherwise.
+mary.be_friend_with(john)
+
+# check if paul is mary's friend
+mary.friend_with?(paul)
+
+# now it's time for paul to make a john's request;
+# and john accepts it with #accept_friendship_with method,
+# that returns friendship object or false
+paul.be_friend_with(john)
+john.accept_friendship_with(paul)
+
+# paul also wants to be friend with mary;
+# unfortunately, mary denies his request.
+paul.be_friend_with(mary)
+mary.deny_friendship_with(paul)
+
+# you can retrieve mutual friends
+# the secord hash argument will be passed to
+# the User model, when doing the find
+mary.mutual_friends(john, :limit => 10)
+
+# you can retrieve possible friends;
+# is this case, will return only paul
+mary.possible_friends(john, :order => 'name asc')
+
+# check if a user is the current user, so it can
+# be differently presented
+mary.friends.each {|friend| friend.is?(current_user) }
+
+# paginate mary's friends
+friends = mary.friends.paginate(:page => 3, :per_page => 10)
+friends.page_count
+friends.per_page
+friends.total_entries
+
+# if you're dealing with a friendship object,
+# the following methods are available
+friendship.accept!
+friendship.deny!
+friendship.pending!
+friendship.requested_by?(john)
+
+NOTE: You should have a User model. You should also have a friends_count column
+on your model. Otherwise, this won't work!
+
+Copyright (c) 2008 Nando Vieira, released under the MIT license
