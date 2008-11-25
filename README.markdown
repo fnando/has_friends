@@ -56,7 +56,7 @@ Usage
 
 	# mary accepts john's request if it exists;
 	# makes a friendship request otherwise.
-	mary.be_friend_with(john)
+	mary.be_friends_with(john)
 
 	# check if paul is mary's friend
 	mary.friends?(paul)
@@ -68,6 +68,30 @@ Usage
 	# if you're dealing with a friendship object,
 	# the following methods are available
 	friendship.accept!
+	
+	# if you're using has_paginate plugin, you can use it:
+	mary.friends.paginate(:page => 3, :limit => 10)
+	
+	# the be_friends_with method returns 2 params: friendship object and status.
+	# the friendship object will be present only when the friendship is created
+	# (that is, when is requested for the first time)
+	# STATUS_ALREADY_FRIENDS		 # => users are already friends
+	# STATUS_ALREADY_REQUESTED		 # => user has already requested friendship
+	# STATUS_IS_YOU					 # => user is trying add himself as friend
+	# STATUS_FRIEND_IS_REQUIRED      # => friend argument is missing
+	# STATUS_FRIENDSHIP_ACCEPTED     # => friendship has been accepted
+	# STATUS_REQUESTED				 # => friendship has been requested
+	
+	friendship, status = mary.be_friends_with(john)
+	
+	if status == Friends::STATUS_REQUESTED
+	  # the friendship has been requested
+	  Mailer.deliver_friendship_request(friendship)
+	elsif status == Friends::STATUS_ALREADY_FRIENDS
+	  # they're already friends
+	else
+	  # ...
+	end
 
 NOTE: You should have a User model. You should also have a `friends_count` column
 on your model. Otherwise, this won't work! You can add as following:
