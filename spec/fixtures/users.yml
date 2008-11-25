@@ -1,0 +1,14 @@
+vader:
+  login: darth_vader
+
+luke:
+  login: luke_skywalker
+
+leia:
+  login: princess_leia
+
+han_solo:
+  login: han_solo
+  
+yoda:
+  login: yoda

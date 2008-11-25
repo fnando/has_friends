@@ -1,4 +1,4 @@
-require "has_friends"
-ActiveRecord::Base.send(:include, SimplesIdeias::Acts::Friendships)
+require File.dirname(__FILE__) + '/lib/has_friends'
+require File.dirname(__FILE__) + '/lib/friendship'
 
-require File.dirname(__FILE__) + "/lib/friendship"
+ActiveRecord::Base.send(:include, SimplesIdeias::Friends)
