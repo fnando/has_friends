@@ -1,24 +1,14 @@
-ENV["RAILS_ENV"] = "test"
-
-require File.expand_path("../../../../config/environment")
+require "active_record"
 require "spec"
-require "spec/rails"
-require "ruby-debug"
+require File.dirname(__FILE__) + "/../init"
 
-ActiveRecord::Base.configurations = {'test' => {:adapter => 'sqlite3', :database => ":memory:"}}
-ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations["test"])
+ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 
-load('schema.rb')
-
-Spec::Runner.configure do |config|
-  config.use_transactional_fixtures = true
-  config.use_instantiated_fixtures  = true
-  config.fixture_path = File.dirname(__FILE__) + '/fixtures/'
-end
+load("schema.rb")
 
 class Object
   def self.unset_class(*args)
-    class_eval do 
+    class_eval do
       args.each do |klass|
         eval(klass) rescue nil
         remove_const(klass) if const_defined?(klass)

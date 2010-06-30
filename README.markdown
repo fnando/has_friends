@@ -7,9 +7,11 @@ get the 1.0 tag.
 Instalation
 -----------
 
-1) Install the plugin with `script/plugin install git://github.com/fnando/has_friends.git`
+Install the plugin with
 
-2) Generate a migration with `script/generate migration create_friendships` and add the following code:
+	script/plugin install git://github.com/fnando/has_friends.git
+
+Then generate a migration with `script/generate migration create_friendships` and add the following code:
 
 	class CreateFriendships < ActiveRecord::Migration
 	  def self.up
@@ -18,7 +20,7 @@ Instalation
 	      t.datetime :requested_at, :accepted_at, :null => true, :default => nil
 	      t.string :status
 	    end
-    
+
 	    add_index :friendships, :user_id
 	    add_index :friendships, :friend_id
 	    add_index :friendships, :status
@@ -29,12 +31,12 @@ Instalation
 	  end
 	end
 
-3) Run the migrations with `rake db:migrate`
+Finally, run the migrations with `rake db:migrate`
 
 Usage
 -----
 
-1) Add the method call `has_friends` to your model.
+Add the method call `has_friends` to your model.
 
 	class User < ActiveRecord::Base
 	  has_friends
@@ -61,17 +63,17 @@ Usage
 	# check if paul is mary's friend
 	mary.friends?(paul)
 
-	# check if a user is the current user, so it can
+	# check if an user is the current user, so it can
 	# be differently presented
 	mary.friends.each {|friend| friend.is?(current_user) }
 
 	# if you're dealing with a friendship object,
 	# the following methods are available
 	friendship.accept!
-	
+
 	# if you're using has_paginate plugin, you can use it:
 	mary.friends.paginate(:page => 3, :limit => 10)
-	
+
 	# the be_friends_with method returns 2 params: friendship object and status.
 	# the friendship object will be present only when the friendship is created
 	# (that is, when is requested for the first time)
@@ -81,9 +83,9 @@ Usage
 	# STATUS_FRIEND_IS_REQUIRED      # => friend argument is missing
 	# STATUS_FRIENDSHIP_ACCEPTED     # => friendship has been accepted
 	# STATUS_REQUESTED				 # => friendship has been requested
-	
+
 	friendship, status = mary.be_friends_with(john)
-	
+
 	if status == Friends::STATUS_REQUESTED
 	  # the friendship has been requested
 	  Mailer.deliver_friendship_request(friendship)
@@ -94,11 +96,9 @@ Usage
 	end
 
 NOTE: You should have a User model. You should also have a `friends_count` column
-on your model. Otherwise, this won't work! You can add as following:
+on your model. Otherwise, this won't work! Create a new migration with `script/generate migration add_friends_count_to_user`:
 
-1) Create a new migration with `script/generate migration add_friends_count_to_user`:
-
-	class CreateFriendships < ActiveRecord::Migration
+	class AddFriendsCountToUser < ActiveRecord::Migration
 	  def self.up
 	    add_column :users, :friends_count, :integer, :default => 0, :null => false
 	  end

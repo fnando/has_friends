@@ -8,7 +8,15 @@ class User < ActiveRecord::Base
 end
 
 describe "has_friends" do
-  fixtures :users
+  before do
+    User.delete_all
+    
+    @vader = User.create(:login => "darth_vader")
+    @luke = User.create(:login => "luke_skywalker")
+    @leia = User.create(:login => "princess_leia")
+    @han_solo = User.create(:login => "han_solo")
+    @yoda = User.create(:login => "yoda")
+  end
   
   describe "methods" do
     it "should respond to has_friends method" do
