@@ -8,9 +8,9 @@ class Friendship < ActiveRecord::Base
   STATUS_REQUESTED           = 6
   
   # scopes
-  named_scope :pending, :conditions => {:status => 'pending'}
-  named_scope :accepted, :conditions => {:status => 'accepted'}
-  named_scope :requested, :conditions => {:status => 'requested'}
+  scope :pending, :conditions => {:status => 'pending'}
+  scope :accepted, :conditions => {:status => 'accepted'}
+  scope :requested, :conditions => {:status => 'requested'}
   
   # associations
   belongs_to :user
