@@ -61,6 +61,14 @@ module SimplesIdeias
         friendships.first :conditions => {:friend_id => friend.id}
       end
 
+      def pending
+        self.friendships.find_all { |f| f.pending? }
+      end
+      
+      def requested
+        self.friendships.find_all { |f| f.requested? }
+      end
+
       def is?(friend)
         self.id == friend.id
       end
